@@ -23,6 +23,7 @@ struct HistoryView: View {
             } else {
                 List(filtered) { rec in
                     HistoryRow(record: rec)
+                        .listRowBackground(Color.clear)
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
                                 history.delete(rec)
@@ -30,6 +31,7 @@ struct HistoryView: View {
                         }
                 }
                 .listStyle(.plain)
+                .clearScrollBackground()
             }
         }
         .searchable(text: $search, placement: .toolbar, prompt: "Поиск")

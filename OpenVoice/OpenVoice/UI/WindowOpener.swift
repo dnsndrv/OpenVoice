@@ -19,10 +19,17 @@ final class WindowOpener {
             NSApp.activate(ignoringOtherApps: true)
             return
         }
-        let hosting = NSHostingController(rootView: content())
+        let rootView = content()
+            .background(GlassBackground(material: .sidebar, blending: .behindWindow))
+        let hosting = NSHostingController(rootView: rootView)
         let window = NSWindow(contentViewController: hosting)
         window.title = title
-        window.styleMask = [.titled, .closable, .resizable, .miniaturizable]
+        window.styleMask = [.titled, .closable, .resizable, .miniaturizable, .fullSizeContentView]
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .visible
+        window.isMovableByWindowBackground = true
+        window.backgroundColor = .clear
+        window.isOpaque = false
         window.setContentSize(size)
         window.center()
         window.isReleasedWhenClosed = false

@@ -86,6 +86,7 @@ struct SettingsView: View {
                 }
             }
             .formStyle(.grouped)
+            .clearScrollBackground()
             .padding(8)
         }
         .frame(minWidth: 480, minHeight: 460)

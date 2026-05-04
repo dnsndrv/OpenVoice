@@ -2,28 +2,23 @@ import AppKit
 import Combine
 import SwiftUI
 
-/// Notch-стиль HUD: тёмная пилюля свисает из-под выреза дисплея
-/// (или из-под верхнего края меню-бара на дисплеях без notch),
-/// расширяется вбок при записи / расшифровке и сворачивается до
-/// невидимости в idle. Не отбирает фокус, не активирует приложение.
+/// Плавающая стеклянная пилюля, прижатая к верху экрана с зазором
+/// от меню-бара. Появляется только когда есть что показать (запись /
+/// расшифровка / вставка / ошибка) — в idle полностью прячется.
 @MainActor
 final class RecordingHUDController {
     private let panel: NSPanel
     private let viewModel: HUDViewModel
     private var cancellables = Set<AnyCancellable>()
 
-    /// Габариты NSPanel — берём «с запасом», чтобы любая конфигурация
-    /// раскрытой пилюли в него вписалась. Сама форма рисуется через
-    /// `NotchShape` внутри SwiftUI и реально видна только тогда, когда
-    /// HUD активен.
-    private let panelWidth: CGFloat = 540
-    private let panelHeight: CGFloat = 64
+    private let panelWidth: CGFloat = 520
+    private let panelHeight: CGFloat = 96
 
     init(coordinator: RecordingCoordinator, recorder: AudioRecorder) {
         let vm = HUDViewModel()
         self.viewModel = vm
 
-        let view = NotchHUDView(viewModel: vm)
+        let view = HUDPillView(viewModel: vm)
         let hosting = NSHostingView(rootView: view)
         hosting.frame = NSRect(x: 0, y: 0, width: panelWidth, height: panelHeight)
 
@@ -70,26 +65,33 @@ final class RecordingHUDController {
     private func show() {
         if !panel.isVisible {
             positionPanel()
+            panel.alphaValue = 0
             panel.orderFrontRegardless()
+            NSAnimationContext.runAnimationGroup { ctx in
+                ctx.duration = 0.18
+                panel.animator().alphaValue = 1
+            }
         }
     }
 
     private func hide() {
-        // Дадим свернуться спрингу до невидимости, потом убираем panel вовсе.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { [weak self] in
+        NSAnimationContext.runAnimationGroup({ ctx in
+            ctx.duration = 0.22
+            panel.animator().alphaValue = 0
+        }, completionHandler: { [weak self] in
             guard let self else { return }
             if case .idle = self.viewModel.state { self.panel.orderOut(nil) }
-        }
+        })
     }
 
-    /// Прижимаем panel к верху экрана: верх контента совпадает с верхней
-    /// границей дисплея, чтобы пилюля «свисала» из-под notch.
     private func positionPanel() {
         guard let screen = NSScreen.main else { return }
         let frame = screen.frame
+        let menubar = max(screen.safeAreaInsets.top, NSStatusBar.system.thickness)
+        let topGap: CGFloat = 14
         let size = panel.frame.size
         let x = frame.midX - size.width / 2
-        let y = frame.maxY - size.height
+        let y = frame.maxY - menubar - topGap - size.height
         panel.setFrameOrigin(NSPoint(x: x, y: y))
     }
 }
@@ -103,123 +105,74 @@ final class HUDViewModel: ObservableObject {
 
 // MARK: - View
 
-private struct NotchHUDView: View {
+private struct HUDPillView: View {
     @ObservedObject var viewModel: HUDViewModel
     @State private var now = Date()
     private let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
 
-    private enum DisplayState: Equatable { case collapsed, active }
-
-    private var displayState: DisplayState {
-        switch viewModel.state {
-        case .idle: return .collapsed
-        case .recording, .transcribing, .injecting, .error: return .active
-        }
-    }
-
-    /// Геометрия физического notch текущего экрана. На устройствах без
-    /// notch возвращаем компактную ширину, эквивалентную небольшой пилюле.
-    private var notchSize: CGSize {
-        guard let screen = NSScreen.main else {
-            return CGSize(width: 180, height: 32)
-        }
-        if let l = screen.auxiliaryTopLeftArea?.width,
-           let r = screen.auxiliaryTopRightArea?.width {
-            let w = screen.frame.width - l - r
-            let h = max(screen.safeAreaInsets.top, NSStatusBar.system.thickness)
-            return CGSize(width: w, height: h)
-        }
-        return CGSize(width: 180, height: NSStatusBar.system.thickness)
-    }
-
-    private let sideExpansion: CGFloat = 110
-    private let heightBonus: CGFloat = 8
-
-    private var pillSize: CGSize {
-        switch displayState {
-        case .collapsed:
-            return notchSize
-        case .active:
-            return CGSize(
-                width: notchSize.width + sideExpansion * 2,
-                height: notchSize.height + heightBonus
-            )
-        }
-    }
-
-    private var animation: Animation {
-        displayState == .collapsed
-            ? .spring(response: 0.45, dampingFraction: 1.0)
-            : .spring(response: 0.42, dampingFraction: 0.80)
-    }
-
     var body: some View {
-        VStack(spacing: 0) {
-            pill
-            Spacer(minLength: 0)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onReceive(timer) { now = $0 }
-        .animation(animation, value: displayState)
-    }
-
-    private var pill: some View {
-        HStack(spacing: 12) {
+        ZStack {
+            GlassCapsule(cornerRadius: 24)
             content
-                .opacity(displayState == .collapsed ? 0 : 1)
-                .animation(displayState == .collapsed
-                    ? .easeOut(duration: 0.12)
-                    : .easeIn(duration: 0.18).delay(0.1),
-                    value: displayState)
+                .padding(.horizontal, 22)
+                .padding(.vertical, 14)
         }
-        .padding(.horizontal, 18)
-        .frame(width: pillSize.width, height: pillSize.height)
-        .background(Color.black)
-        .clipShape(NotchShape(topCornerRadius: 8, bottomCornerRadius: 18))
-        .shadow(color: .black.opacity(displayState == .collapsed ? 0 : 0.35),
-                radius: 12, x: 0, y: 4)
+        .padding(8) // оставим место под shadow, чтобы не клиппилось panel'ом
+        .onReceive(timer) { now = $0 }
     }
 
     @ViewBuilder
     private var content: some View {
         switch viewModel.state {
         case .recording:
-            HStack(spacing: 10) {
-                Circle()
-                    .fill(Color.red)
-                    .frame(width: 7, height: 7)
-                    .opacity(0.85)
-                AudioVisualizer(level: viewModel.level, isActive: true)
+            HStack(spacing: 14) {
+                PulsingDot(color: .red)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Идёт запись")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.primary)
+                    AudioVisualizer(level: viewModel.level, isActive: true,
+                                    color: .primary)
+                }
+                Spacer(minLength: 8)
                 Text(elapsed)
-                    .font(.system(size: 11, weight: .medium, design: .monospaced))
-                    .foregroundStyle(.white)
+                    .font(.system(size: 18, weight: .medium, design: .monospaced))
                     .monospacedDigit()
+                    .foregroundStyle(.primary)
             }
         case .transcribing:
-            HStack(spacing: 10) {
+            HStack(spacing: 14) {
                 ProgressView()
-                    .controlSize(.small)
-                    .tint(.white)
-                Text("Расшифровка")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.white)
+                    .controlSize(.regular)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Расшифровка").font(.system(size: 13, weight: .semibold))
+                    Text("Whisper обрабатывает аудио…")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 8)
             }
         case .injecting:
-            HStack(spacing: 10) {
+            HStack(spacing: 14) {
                 Image(systemName: "text.cursor")
-                    .foregroundStyle(.white)
-                Text("Вставка")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.white)
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(.tint)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Вставляю текст").font(.system(size: 13, weight: .semibold))
+                    Text("В активное приложение").font(.system(size: 11)).foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 8)
             }
         case .error(let msg):
-            HStack(spacing: 10) {
+            HStack(spacing: 14) {
                 Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(.yellow)
-                Text(msg)
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Ошибка").font(.system(size: 13, weight: .semibold))
+                    Text(msg).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
+                }
+                Spacer(minLength: 8)
             }
         case .idle:
             EmptyView()
@@ -229,5 +182,19 @@ private struct NotchHUDView: View {
     private var elapsed: String {
         let s = max(0, Int(now.timeIntervalSince(viewModel.startedAt)))
         return String(format: "%02d:%02d", s / 60, s % 60)
+    }
+}
+
+private struct PulsingDot: View {
+    let color: Color
+    @State private var pulse = false
+    var body: some View {
+        Circle()
+            .fill(color)
+            .frame(width: 10, height: 10)
+            .opacity(pulse ? 1.0 : 0.45)
+            .scaleEffect(pulse ? 1.0 : 0.8)
+            .animation(.easeInOut(duration: 0.7).repeatForever(autoreverses: true), value: pulse)
+            .onAppear { pulse = true }
     }
 }

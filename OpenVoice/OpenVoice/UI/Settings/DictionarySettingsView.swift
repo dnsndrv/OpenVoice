@@ -45,34 +45,39 @@ struct DictionarySettingsView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                Table(dictionary.entries, selection: $selection) {
-                    TableColumn("Услышал") { e in
-                        TextField("", text: binding(for: e, keyPath: \.pattern))
-                            .textFieldStyle(.plain)
-                    }
-                    TableColumn("Заменить на") { e in
-                        TextField("", text: binding(for: e, keyPath: \.replacement))
-                            .textFieldStyle(.plain)
-                    }
-                    TableColumn("Aa") { e in
-                        Toggle("", isOn: binding(for: e, keyPath: \.caseSensitive))
-                            .toggleStyle(.checkbox)
-                            .labelsHidden()
-                    }
-                    .width(36)
-                    TableColumn("") { e in
-                        Button {
-                            dictionary.delete(id: e.id)
-                        } label: {
-                            Image(systemName: "trash")
-                        }
-                        .buttonStyle(.borderless)
-                        .foregroundStyle(.secondary)
-                    }
-                    .width(28)
-                }
-                .frame(minHeight: 240)
+                table
+                    .frame(minHeight: 240)
+                    .clearScrollBackground()
             }
+        }
+    }
+
+    private var table: some View {
+        Table(dictionary.entries, selection: $selection) {
+            TableColumn("Услышал") { e in
+                TextField("", text: binding(for: e, keyPath: \.pattern))
+                    .textFieldStyle(.plain)
+            }
+            TableColumn("Заменить на") { e in
+                TextField("", text: binding(for: e, keyPath: \.replacement))
+                    .textFieldStyle(.plain)
+            }
+            TableColumn("Aa") { e in
+                Toggle("", isOn: binding(for: e, keyPath: \.caseSensitive))
+                    .toggleStyle(.checkbox)
+                    .labelsHidden()
+            }
+            .width(36)
+            TableColumn("") { e in
+                Button {
+                    dictionary.delete(id: e.id)
+                } label: {
+                    Image(systemName: "trash")
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.secondary)
+            }
+            .width(28)
         }
     }
 

@@ -6,7 +6,7 @@ import SwiftUI
 struct AudioVisualizer: View {
     let level: Float
     let isActive: Bool
-    var color: Color = .white
+    var color: Color = .primary
 
     private let barCount = 17
     private let barWidth: CGFloat = 2.5
@@ -45,7 +45,7 @@ struct AudioVisualizer: View {
 
 /// Статичные ровные бары — идл-состояние.
 struct AudioVisualizerIdle: View {
-    var color: Color = .white
+    var color: Color = .primary
     private let barCount = 17
     var body: some View {
         HStack(spacing: 2) {
