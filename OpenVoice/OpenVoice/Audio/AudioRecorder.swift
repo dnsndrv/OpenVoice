@@ -99,11 +99,16 @@ final class AudioRecorder {
         let outCapacity = AVAudioFrameCount(Double(inputBuffer.frameLength) * ratio + 64)
         guard let output = AVAudioPCMBuffer(pcmFormat: targetFormat, frameCapacity: outCapacity) else { return }
 
+        // Сбрасываем внутреннее состояние конвертера, чтобы он не считал
+        // что предыдущий вызов закрыл stream и не отказывался принимать данные.
+        converter.reset()
+
         var consumed = false
         var convError: NSError?
         let status = converter.convert(to: output, error: &convError) { _, statusPtr in
             if consumed {
-                statusPtr.pointee = .endOfStream
+                // Больше данных в этом вызове нет, но stream не закрыт.
+                statusPtr.pointee = .noDataNow
                 return nil
             }
             consumed = true
