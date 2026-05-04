@@ -6,6 +6,7 @@ struct MenuBarView: View {
     @EnvironmentObject var app: AppCoordinator
     @EnvironmentObject var recording: RecordingCoordinator
     @EnvironmentObject var history: HistoryStore
+    @EnvironmentObject var models: ModelManager
 
     var body: some View {
         ZStack {
@@ -14,6 +15,9 @@ struct MenuBarView: View {
             VStack(alignment: .leading, spacing: 14) {
                 statusCard
                 hotkeyRow
+                if case .downloading(let progress) = models.state {
+                    downloadCard(progress: progress)
+                }
                 recentSection
                 Spacer(minLength: 0)
                 actionRow
@@ -21,6 +25,43 @@ struct MenuBarView: View {
             .padding(16)
         }
         .frame(width: 340, height: 380)
+    }
+
+    private func downloadCard(progress: Double) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.down.circle.fill").foregroundStyle(.tint)
+                Text("Скачивается модель")
+                    .font(.system(size: 12, weight: .semibold))
+                Spacer()
+                Text(String(format: "%.0f%%", progress * 100))
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundStyle(.secondary)
+            }
+            ProgressView(value: progress).tint(.accentColor)
+            HStack {
+                Text(downloadingModelName)
+                    .font(.caption).foregroundStyle(.secondary)
+                Spacer()
+                Button("Отмена") { models.cancel() }
+                    .buttonStyle(.plain)
+                    .font(.caption)
+                    .foregroundStyle(.tint)
+            }
+        }
+        .padding(10)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(.regularMaterial)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(Color.primary.opacity(0.06), lineWidth: 0.5)
+        )
+    }
+
+    private var downloadingModelName: String {
+        models.activeDownload?.displayName ?? ""
     }
 
     // MARK: - Status
@@ -203,9 +244,12 @@ struct MenuBarView: View {
 
     private func openSettings() {
         let app = self.app
+        let models = self.models
         WindowOpener.shared.open(id: "settings", title: "Настройки",
                                   size: NSSize(width: 540, height: 560)) {
-            SettingsView().environmentObject(app)
+            SettingsView()
+                .environmentObject(app)
+                .environmentObject(models)
         }
     }
 

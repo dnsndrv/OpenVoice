@@ -30,6 +30,8 @@ final class ModelManager: ObservableObject {
     }
 
     @Published private(set) var state: LoadState = .absent
+    /// Имя модели, которая сейчас скачивается (для показа в UI).
+    @Published private(set) var activeDownload: ModelName?
     private var downloadTask: URLSessionDownloadTask?
     private var session: URLSession?
     private var sessionDelegate: DownloadDelegate?
@@ -64,6 +66,7 @@ final class ModelManager: ObservableObject {
     func download(model: ModelName, to target: URL) async throws -> URL {
         try? FileManager.default.removeItem(at: target)
         state = .downloading(0)
+        activeDownload = model
 
         return try await withCheckedThrowingContinuation { (cont: CheckedContinuation<URL, Error>) in
             let delegate = DownloadDelegate(
@@ -76,9 +79,11 @@ final class ModelManager: ObservableObject {
                         switch result {
                         case .success(let url):
                             self?.state = .ready(url)
+                            self?.activeDownload = nil
                             cont.resume(returning: url)
                         case .failure(let err):
                             self?.state = .failed(err.localizedDescription)
+                            self?.activeDownload = nil
                             cont.resume(throwing: err)
                         }
                     }
@@ -98,6 +103,7 @@ final class ModelManager: ObservableObject {
     func cancel() {
         downloadTask?.cancel()
         downloadTask = nil
+        activeDownload = nil
         state = .absent
     }
 }

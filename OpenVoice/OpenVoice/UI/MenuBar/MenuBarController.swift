@@ -27,6 +27,7 @@ final class MenuBarController {
                 .environmentObject(coordinator)
                 .environmentObject(coordinator.recording)
                 .environmentObject(coordinator.history)
+                .environmentObject(coordinator.models)
         )
 
         coordinator.recording.$state

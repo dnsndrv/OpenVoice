@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var app: AppCoordinator
+    @EnvironmentObject var models: ModelManager
     @State private var hotkey: ModifierKey = .rightCommand
     @State private var language: String = "ru"
     @State private var restorePasteboard: Bool = true
@@ -27,7 +28,7 @@ struct SettingsView: View {
                         ForEach(ModelManager.ModelName.allCases) { m in
                             HStack {
                                 Text(m.displayName)
-                                if app.models.isDownloaded(m) {
+                                if models.isDownloaded(m) {
                                     Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
                                 }
                             }
@@ -101,10 +102,10 @@ struct SettingsView: View {
 
     @ViewBuilder
     private var modelStateRow: some View {
-        switch app.models.state {
+        switch models.state {
         case .absent, .ready, .failed:
             HStack {
-                if app.models.isDownloaded(selectedModel) {
+                if models.isDownloaded(selectedModel) {
                     Label("Модель скачана", systemImage: "checkmark.circle.fill")
                         .foregroundStyle(.green)
                     Spacer()
@@ -119,17 +120,27 @@ struct SettingsView: View {
                     }
                 }
             }
-            if case .failed(let msg) = app.models.state {
+            if case .failed(let msg) = models.state {
                 Text(msg).font(.caption).foregroundStyle(.red)
             }
         case .downloading(let progress):
             VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 8) {
+                    ProgressView().controlSize(.small)
+                    Text("Качаю \(selectedModel.displayName)")
+                        .font(.callout)
+                    Spacer()
+                    Text(String(format: "%.0f%%", progress * 100))
+                        .font(.callout).monospacedDigit()
+                        .foregroundStyle(.secondary)
+                }
                 ProgressView(value: progress)
                 HStack {
-                    Text(String(format: "Скачивание… %.0f%%", progress * 100))
-                        .font(.caption)
+                    Text("Файл сохранится в ~/Library/Application Support/OpenVoice/models")
+                        .font(.caption2).foregroundStyle(.secondary)
                     Spacer()
-                    Button("Отмена") { app.models.cancel() }
+                    Button("Отмена") { models.cancel() }
+                        .controlSize(.small)
                 }
             }
         }
