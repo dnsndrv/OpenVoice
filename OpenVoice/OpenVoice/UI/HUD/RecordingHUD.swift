@@ -11,8 +11,8 @@ final class RecordingHUDController {
     private let viewModel: HUDViewModel
     private var cancellables = Set<AnyCancellable>()
 
-    private let panelWidth: CGFloat = 320
-    private let panelHeight: CGFloat = 64
+    private let panelWidth: CGFloat = 420
+    private let panelHeight: CGFloat = 60
 
     init(coordinator: RecordingCoordinator, recorder: AudioRecorder) {
         let vm = HUDViewModel()
@@ -58,9 +58,11 @@ final class RecordingHUDController {
         case .recording:
             viewModel.startedAt = Date()
             show()
-        case .transcribing, .injecting, .error:
+        case .transcribing, .error:
             show()
-        case .idle:
+        case .idle, .injecting:
+            // .injecting не показываем — пользователь уже всё закончил,
+            // вставка дешёвая и проходит в фоне.
             hide()
         }
     }
@@ -83,7 +85,10 @@ final class RecordingHUDController {
             panel.animator().alphaValue = 0
         }, completionHandler: { [weak self] in
             guard let self else { return }
-            if case .idle = self.viewModel.state { self.panel.orderOut(nil) }
+            switch self.viewModel.state {
+            case .idle, .injecting: self.panel.orderOut(nil)
+            default: break
+            }
         })
     }
 
@@ -129,29 +134,28 @@ private struct HUDPillView: View {
     private var content: some View {
         switch viewModel.state {
         case .recording:
-            HStack(spacing: 10) {
+            HStack(spacing: 12) {
                 PulsingDot(color: .red)
+                // Волна занимает всё свободное пространство до таймера.
                 AudioVisualizer(level: viewModel.level, isActive: true)
-                Spacer(minLength: 4)
+                    .frame(maxWidth: .infinity)
                 Text(elapsed)
                     .font(.system(size: 13, weight: .medium, design: .monospaced))
                     .monospacedDigit()
                     .foregroundStyle(.primary)
+                    .fixedSize()
             }
         case .transcribing:
-            HStack(spacing: 10) {
+            HStack(spacing: 12) {
                 ProgressView().controlSize(.small)
                 Text("Расшифровка")
                     .font(.system(size: 13, weight: .medium))
                 Spacer(minLength: 0)
             }
         case .injecting:
-            HStack(spacing: 10) {
-                Image(systemName: "text.cursor").foregroundStyle(.tint)
-                Text("Вставка")
-                    .font(.system(size: 13, weight: .medium))
-                Spacer(minLength: 0)
-            }
+            // Этот кейс больше не показывается (HUD скрывается сразу
+            // после расшифровки), но оставлен для exhaustiveness switch.
+            EmptyView()
         case .error(let msg):
             HStack(spacing: 10) {
                 Image(systemName: "exclamationmark.triangle.fill")

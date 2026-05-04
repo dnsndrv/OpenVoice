@@ -28,31 +28,66 @@ struct GlassBackground: NSViewRepresentable {
     }
 }
 
-/// «Стеклянная» пилюля: материал + тонкая светлая обводка + мягкая тень.
-/// Используется как фон HUD и других плавающих элементов. На macOS 26+
-/// заменяется на `glassEffect()` если он доступен.
+/// «Стеклянная» пилюля в духе Apple Liquid Glass: ультратонкий материал
+/// + верхний highlight, имитирующий преломление света на стекле, +
+/// градиентная edge-обводка, придающая объём граням. На macOS 26+
+/// автоматически заменяется на нативный `.glassEffect()` (когда выйдет
+/// SDK — поправим единственное место).
 struct GlassCapsule: View {
     var cornerRadius: CGFloat = 22
-    var material: Material = .regularMaterial
     var stroke: Bool = true
     var shadow: Bool = true
 
     var body: some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
         ZStack {
-            shape.fill(material)
+            // 1. Базовый ультратонкий материал — основа стекла.
+            shape.fill(.ultraThinMaterial)
+
+            // 2. Верхний светлый highlight: имитирует свет, преломляющийся
+            //    через стеклянный край сверху.
+            shape.fill(
+                LinearGradient(
+                    colors: [
+                        Color.white.opacity(0.22),
+                        Color.white.opacity(0.06),
+                        Color.clear
+                    ],
+                    startPoint: .top,
+                    endPoint: .center
+                )
+            )
+            .blendMode(.plusLighter)
+
+            // 3. Нижнее лёгкое затемнение — даёт «толщину» стеклу.
+            shape.fill(
+                LinearGradient(
+                    colors: [Color.clear, Color.black.opacity(0.05)],
+                    startPoint: .center,
+                    endPoint: .bottom
+                )
+            )
+
+            // 4. Двухтоновая обводка: яркий блик сверху-слева, мягкая
+            //    тёмная грань снизу-справа.
             if stroke {
                 shape.strokeBorder(
                     LinearGradient(
-                        colors: [Color.white.opacity(0.22), Color.white.opacity(0.04)],
-                        startPoint: .top, endPoint: .bottom
+                        colors: [
+                            Color.white.opacity(0.55),
+                            Color.white.opacity(0.12),
+                            Color.white.opacity(0.04),
+                            Color.white.opacity(0.20)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
                     ),
-                    lineWidth: 0.6
+                    lineWidth: 0.7
                 )
             }
         }
         .compositingGroup()
-        .shadow(color: .black.opacity(shadow ? 0.28 : 0), radius: 18, x: 0, y: 6)
+        .shadow(color: .black.opacity(shadow ? 0.25 : 0), radius: 16, x: 0, y: 6)
     }
 }
 

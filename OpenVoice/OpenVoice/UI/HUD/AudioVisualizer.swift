@@ -1,58 +1,77 @@
 import SwiftUI
 
-/// Бары-эквалайзер с псевдо-волной: высота каждого бара модулируется
-/// синусом со сдвигом фазы по индексу плюс реальный уровень микрофона.
-/// Центральные бары визуально выше за счёт «поднятия серединой».
+/// Плавная аудио-волна: бары размещаются по всей доступной ширине,
+/// высота каждого бара модулируется псевдо-шумом + реальным уровнем
+/// микрофона. Центральные бары визуально выше: создаёт «дыхание»
+/// волны от середины к краям, как в системных рекордерах macOS.
 struct AudioVisualizer: View {
     let level: Float
     let isActive: Bool
     var color: Color = .primary
-
-    private let barCount = 17
-    private let barWidth: CGFloat = 2.5
-    private let barSpacing: CGFloat = 2
-    private let minHeight: CGFloat = 3
-    private let maxHeight: CGFloat = 22
-
-    private var phases: [Double] {
-        (0..<barCount).map { Double($0) * 0.45 }
-    }
+    /// Желательная плотность баров: примерно 1 бар на N точек ширины.
+    var density: CGFloat = 7
+    var minHeight: CGFloat = 3
+    var maxHeight: CGFloat = 24
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { ctx in
-            HStack(spacing: barSpacing) {
-                ForEach(0..<barCount, id: \.self) { i in
-                    Capsule(style: .continuous)
-                        .fill(color.opacity(0.92))
-                        .frame(width: barWidth, height: height(at: i, time: ctx.date.timeIntervalSinceReferenceDate))
+        GeometryReader { geo in
+            let count = max(12, Int(geo.size.width / density))
+            let totalCount = CGFloat(count)
+            let barWidth: CGFloat = 2.5
+            let spacing = max(1, (geo.size.width - barWidth * totalCount) / max(1, totalCount - 1))
+
+            TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { ctx in
+                HStack(spacing: spacing) {
+                    ForEach(0..<count, id: \.self) { i in
+                        Capsule(style: .continuous)
+                            .fill(color.opacity(0.92))
+                            .frame(
+                                width: barWidth,
+                                height: barHeight(
+                                    at: i,
+                                    of: count,
+                                    time: ctx.date.timeIntervalSinceReferenceDate
+                                )
+                            )
+                    }
                 }
+                .frame(height: maxHeight, alignment: .center)
             }
-            .frame(height: maxHeight)
         }
+        .frame(height: maxHeight)
     }
 
-    private func height(at index: Int, time: TimeInterval) -> CGFloat {
+    private func barHeight(at index: Int, of count: Int, time: TimeInterval) -> CGFloat {
         guard isActive else { return minHeight }
         let amp = max(0, min(1, pow(Double(level), 0.7)))
-        let wave = (sin(time * 7.5 + phases[index]) + 1) * 0.5
-        let mid = Double(barCount - 1) / 2.0
+        // Псевдо-волна: смещение фазы по индексу + два разных периода
+        // дают более органичное «дыхание» вместо монотонной синусоиды.
+        let phase = Double(index) * 0.42
+        let wave = (sin(time * 6.5 + phase) + sin(time * 2.7 + phase * 0.5)) * 0.25 + 0.5
+        let mid = Double(count - 1) / 2.0
         let centerness = 1.0 - abs(Double(index) - mid) / mid
-        let boost = 0.55 + 0.45 * centerness
+        let boost = 0.5 + 0.5 * centerness
         let normalized = amp * wave * boost
         return max(minHeight, minHeight + CGFloat(normalized) * (maxHeight - minHeight))
     }
 }
 
-/// Статичные ровные бары — идл-состояние.
+/// Статичные ровные бары — idle-состояние.
 struct AudioVisualizerIdle: View {
     var color: Color = .primary
-    private let barCount = 17
     var body: some View {
-        HStack(spacing: 2) {
-            ForEach(0..<barCount, id: \.self) { _ in
-                Capsule().fill(color.opacity(0.4)).frame(width: 2.5, height: 3)
+        GeometryReader { geo in
+            let count = max(12, Int(geo.size.width / 7))
+            let totalCount = CGFloat(count)
+            let barWidth: CGFloat = 2.5
+            let spacing = max(1, (geo.size.width - barWidth * totalCount) / max(1, totalCount - 1))
+            HStack(spacing: spacing) {
+                ForEach(0..<count, id: \.self) { _ in
+                    Capsule().fill(color.opacity(0.4)).frame(width: barWidth, height: 3)
+                }
             }
+            .frame(height: 24)
         }
-        .frame(height: 22)
+        .frame(height: 24)
     }
 }
