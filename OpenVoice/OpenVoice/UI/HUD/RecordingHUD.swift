@@ -11,8 +11,8 @@ final class RecordingHUDController {
     private let viewModel: HUDViewModel
     private var cancellables = Set<AnyCancellable>()
 
-    private let panelWidth: CGFloat = 520
-    private let panelHeight: CGFloat = 96
+    private let panelWidth: CGFloat = 320
+    private let panelHeight: CGFloat = 64
 
     init(coordinator: RecordingCoordinator, recorder: AudioRecorder) {
         let vm = HUDViewModel()
@@ -33,7 +33,10 @@ final class RecordingHUDController {
         panel.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenAuxiliary]
         panel.backgroundColor = .clear
         panel.isOpaque = false
-        panel.hasShadow = false
+        // Системная тень окна следует за альфа-маской контента — поэтому
+        // тень получается ровно по форме нашей пилюли, без квадратных
+        // артефактов, которые даёт SwiftUI .shadow на borderless панели.
+        panel.hasShadow = true
         panel.contentView = hosting
         panel.ignoresMouseEvents = true
         self.panel = panel
@@ -86,12 +89,11 @@ final class RecordingHUDController {
 
     private func positionPanel() {
         guard let screen = NSScreen.main else { return }
-        let frame = screen.frame
-        let menubar = max(screen.safeAreaInsets.top, NSStatusBar.system.thickness)
-        let topGap: CGFloat = 14
+        let visible = screen.visibleFrame
+        let bottomGap: CGFloat = 24
         let size = panel.frame.size
-        let x = frame.midX - size.width / 2
-        let y = frame.maxY - menubar - topGap - size.height
+        let x = visible.midX - size.width / 2
+        let y = visible.minY + bottomGap
         panel.setFrameOrigin(NSPoint(x: x, y: y))
     }
 }
@@ -111,13 +113,15 @@ private struct HUDPillView: View {
     private let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
 
     var body: some View {
+        // Контент полностью заполняет panel — это критично, чтобы системная
+        // тень окна (panel.hasShadow=true) совпадала с альфа-формой пилюли,
+        // а не оставляла прямоугольный ореол по углам panel'а.
         ZStack {
-            GlassCapsule(cornerRadius: 24)
+            GlassCapsule(cornerRadius: 18, shadow: false)
             content
-                .padding(.horizontal, 22)
-                .padding(.vertical, 14)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
         }
-        .padding(8) // оставим место под shadow, чтобы не клиппилось panel'ом
         .onReceive(timer) { now = $0 }
     }
 
@@ -125,54 +129,38 @@ private struct HUDPillView: View {
     private var content: some View {
         switch viewModel.state {
         case .recording:
-            HStack(spacing: 14) {
+            HStack(spacing: 10) {
                 PulsingDot(color: .red)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Идёт запись")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(.primary)
-                    AudioVisualizer(level: viewModel.level, isActive: true,
-                                    color: .primary)
-                }
-                Spacer(minLength: 8)
+                AudioVisualizer(level: viewModel.level, isActive: true)
+                Spacer(minLength: 4)
                 Text(elapsed)
-                    .font(.system(size: 18, weight: .medium, design: .monospaced))
+                    .font(.system(size: 13, weight: .medium, design: .monospaced))
                     .monospacedDigit()
                     .foregroundStyle(.primary)
             }
         case .transcribing:
-            HStack(spacing: 14) {
-                ProgressView()
-                    .controlSize(.regular)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Расшифровка").font(.system(size: 13, weight: .semibold))
-                    Text("Whisper обрабатывает аудио…")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
-                }
-                Spacer(minLength: 8)
+            HStack(spacing: 10) {
+                ProgressView().controlSize(.small)
+                Text("Расшифровка")
+                    .font(.system(size: 13, weight: .medium))
+                Spacer(minLength: 0)
             }
         case .injecting:
-            HStack(spacing: 14) {
-                Image(systemName: "text.cursor")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundStyle(.tint)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Вставляю текст").font(.system(size: 13, weight: .semibold))
-                    Text("В активное приложение").font(.system(size: 11)).foregroundStyle(.secondary)
-                }
-                Spacer(minLength: 8)
+            HStack(spacing: 10) {
+                Image(systemName: "text.cursor").foregroundStyle(.tint)
+                Text("Вставка")
+                    .font(.system(size: 13, weight: .medium))
+                Spacer(minLength: 0)
             }
         case .error(let msg):
-            HStack(spacing: 14) {
+            HStack(spacing: 10) {
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(.yellow)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Ошибка").font(.system(size: 13, weight: .semibold))
-                    Text(msg).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
-                }
-                Spacer(minLength: 8)
+                Text(msg)
+                    .font(.system(size: 12))
+                    .foregroundStyle(.primary)
+                    .lineLimit(2)
+                Spacer(minLength: 0)
             }
         case .idle:
             EmptyView()

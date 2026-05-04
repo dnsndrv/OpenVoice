@@ -19,17 +19,15 @@ final class WindowOpener {
             NSApp.activate(ignoringOtherApps: true)
             return
         }
+        // Стандартный системный titlebar — кнопки управления и заголовок
+        // должны быть видны. Glass-материал ограничиваем зоной контента.
         let rootView = content()
-            .background(GlassBackground(material: .sidebar, blending: .behindWindow))
+            .background(GlassBackground(material: .windowBackground, blending: .behindWindow))
         let hosting = NSHostingController(rootView: rootView)
         let window = NSWindow(contentViewController: hosting)
         window.title = title
-        window.styleMask = [.titled, .closable, .resizable, .miniaturizable, .fullSizeContentView]
-        window.titlebarAppearsTransparent = true
+        window.styleMask = [.titled, .closable, .resizable, .miniaturizable]
         window.titleVisibility = .visible
-        window.isMovableByWindowBackground = true
-        window.backgroundColor = .clear
-        window.isOpaque = false
         window.setContentSize(size)
         window.center()
         window.isReleasedWhenClosed = false
