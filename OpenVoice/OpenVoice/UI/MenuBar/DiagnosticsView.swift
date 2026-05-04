@@ -5,18 +5,15 @@ import SwiftUI
 
 struct DiagnosticsView: View {
     @EnvironmentObject var app: AppCoordinator
-    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Диагностика").font(.title3).bold()
                 Spacer()
                 Button("Скопировать") {
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(report, forType: .string)
                 }
-                Button("Закрыть") { dismiss() }
             }
             .padding(12)
 

@@ -2,7 +2,6 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var app: AppCoordinator
-    @Environment(\.dismiss) private var dismiss
     @State private var hotkey: ModifierKey = .rightCommand
     @State private var language: String = "ru"
     @State private var restorePasteboard: Bool = true
@@ -11,15 +10,6 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Text("Настройки").font(.title3).bold()
-                Spacer()
-                Button("Готово") { dismiss() }
-            }
-            .padding(12)
-
-            Divider()
-
             Form {
                 Section("Хоткей") {
                     Picker("Клавиша", selection: $hotkey) {

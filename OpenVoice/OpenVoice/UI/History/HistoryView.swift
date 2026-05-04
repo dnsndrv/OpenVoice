@@ -3,17 +3,14 @@ import SwiftUI
 
 struct HistoryView: View {
     @EnvironmentObject var history: HistoryStore
-    @Environment(\.dismiss) private var dismiss
     @State private var search = ""
     @State private var confirmClear = false
 
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("История").font(.title3).bold()
                 Spacer()
                 Button("Очистить всё") { confirmClear = true }
-                Button("Закрыть") { dismiss() }
             }
             .padding(12)
 

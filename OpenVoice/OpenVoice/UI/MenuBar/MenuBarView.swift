@@ -6,9 +6,6 @@ struct MenuBarView: View {
     @EnvironmentObject var app: AppCoordinator
     @EnvironmentObject var recording: RecordingCoordinator
     @EnvironmentObject var history: HistoryStore
-    @State private var showHistory = false
-    @State private var showSettings = false
-    @State private var showDiagnostics = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -64,9 +61,9 @@ struct MenuBarView: View {
             Divider()
 
             HStack {
-                Button("История…") { showHistory = true }
-                Button("Настройки…") { showSettings = true }
-                Button("Диагностика") { showDiagnostics = true }
+                Button("История…") { openHistory() }
+                Button("Настройки…") { openSettings() }
+                Button("Диагностика") { openDiagnostics() }
                 Spacer()
                 Button("Выйти") { NSApp.terminate(nil) }
             }
@@ -74,20 +71,29 @@ struct MenuBarView: View {
         }
         .padding(16)
         .frame(width: 320)
-        .sheet(isPresented: $showHistory) {
-            HistoryView()
-                .environmentObject(history)
-                .frame(width: 520, height: 480)
+    }
+
+    private func openHistory() {
+        let history = self.history
+        WindowOpener.shared.open(id: "history", title: "История",
+                                  size: NSSize(width: 540, height: 520)) {
+            HistoryView().environmentObject(history)
         }
-        .sheet(isPresented: $showSettings) {
-            SettingsView()
-                .environmentObject(app)
-                .frame(width: 480, height: 360)
+    }
+
+    private func openSettings() {
+        let app = self.app
+        WindowOpener.shared.open(id: "settings", title: "Настройки",
+                                  size: NSSize(width: 520, height: 540)) {
+            SettingsView().environmentObject(app)
         }
-        .sheet(isPresented: $showDiagnostics) {
-            DiagnosticsView()
-                .environmentObject(app)
-                .frame(width: 560, height: 420)
+    }
+
+    private func openDiagnostics() {
+        let app = self.app
+        WindowOpener.shared.open(id: "diagnostics", title: "Диагностика",
+                                  size: NSSize(width: 580, height: 460)) {
+            DiagnosticsView().environmentObject(app)
         }
     }
 
