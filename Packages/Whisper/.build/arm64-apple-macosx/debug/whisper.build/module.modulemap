@@ -1,0 +1,4 @@
+module whisper {
+    umbrella header "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/include/whisper.h"
+    export *
+}

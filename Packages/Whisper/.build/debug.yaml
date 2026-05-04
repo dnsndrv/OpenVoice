@@ -1,0 +1,75 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<whisper-arm64-apple-macosx15.0-debug.module>"]
+  "test": ["<whisper-arm64-apple-macosx15.0-debug.module>"]
+  "whisper-arm64-apple-macosx15.0-debug.module": ["<whisper-arm64-apple-macosx15.0-debug.module>"]
+default: "main"
+nodes:
+  "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-aarch64.c.o":
+    tool: clang
+    inputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/ggml-aarch64.c"]
+    outputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-aarch64.c.o"]
+    description: "Compiling whisper ggml-aarch64.c"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang","-fobjc-arc","-target","arm64-apple-macosx14.0","-O0","-DSWIFT_PACKAGE=1","-DDEBUG=1","-fblocks","-index-store-path","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/index/store","-fmodules","-fmodule-name=whisper","-fmodules-cache-path=/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/ModuleCache","-I","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/include","-DGGML_USE_ACCELERATE","-DACCELERATE_NEW_LAPACK","-DACCELERATE_LAPACK_ILP64","-DGGML_USE_ACCELERATE","-I/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper","-I/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper","-isysroot","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-fPIC","-g","-MD","-MT","dependencies","-MF","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-aarch64.c.d","-c","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/ggml-aarch64.c","-o","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-aarch64.c.o"]
+    deps: "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-aarch64.c.d"
+
+  "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-alloc.c.o":
+    tool: clang
+    inputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/ggml-alloc.c"]
+    outputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-alloc.c.o"]
+    description: "Compiling whisper ggml-alloc.c"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang","-fobjc-arc","-target","arm64-apple-macosx14.0","-O0","-DSWIFT_PACKAGE=1","-DDEBUG=1","-fblocks","-index-store-path","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/index/store","-fmodules","-fmodule-name=whisper","-fmodules-cache-path=/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/ModuleCache","-I","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/include","-DGGML_USE_ACCELERATE","-DACCELERATE_NEW_LAPACK","-DACCELERATE_LAPACK_ILP64","-DGGML_USE_ACCELERATE","-I/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper","-I/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper","-isysroot","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-fPIC","-g","-MD","-MT","dependencies","-MF","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-alloc.c.d","-c","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/ggml-alloc.c","-o","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-alloc.c.o"]
+    deps: "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-alloc.c.d"
+
+  "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-backend.cpp.o":
+    tool: clang
+    inputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/ggml-backend.cpp"]
+    outputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-backend.cpp.o"]
+    description: "Compiling whisper ggml-backend.cpp"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang","-fobjc-arc","-target","arm64-apple-macosx14.0","-O0","-DSWIFT_PACKAGE=1","-DDEBUG=1","-fblocks","-index-store-path","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/index/store","-I","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/include","-DGGML_USE_ACCELERATE","-DACCELERATE_NEW_LAPACK","-DACCELERATE_LAPACK_ILP64","-DGGML_USE_ACCELERATE","-I/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper","-I/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper","-isysroot","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-fPIC","-g","-g","-MD","-MT","dependencies","-MF","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-backend.cpp.d","-std=c++17","-c","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/ggml-backend.cpp","-o","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-backend.cpp.o"]
+    deps: "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-backend.cpp.d"
+
+  "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-quants.c.o":
+    tool: clang
+    inputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/ggml-quants.c"]
+    outputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-quants.c.o"]
+    description: "Compiling whisper ggml-quants.c"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang","-fobjc-arc","-target","arm64-apple-macosx14.0","-O0","-DSWIFT_PACKAGE=1","-DDEBUG=1","-fblocks","-index-store-path","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/index/store","-fmodules","-fmodule-name=whisper","-fmodules-cache-path=/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/ModuleCache","-I","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/include","-DGGML_USE_ACCELERATE","-DACCELERATE_NEW_LAPACK","-DACCELERATE_LAPACK_ILP64","-DGGML_USE_ACCELERATE","-I/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper","-I/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper","-isysroot","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-fPIC","-g","-MD","-MT","dependencies","-MF","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-quants.c.d","-c","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/ggml-quants.c","-o","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-quants.c.o"]
+    deps: "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-quants.c.d"
+
+  "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml.c.o":
+    tool: clang
+    inputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/ggml.c"]
+    outputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml.c.o"]
+    description: "Compiling whisper ggml.c"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang","-fobjc-arc","-target","arm64-apple-macosx14.0","-O0","-DSWIFT_PACKAGE=1","-DDEBUG=1","-fblocks","-index-store-path","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/index/store","-fmodules","-fmodule-name=whisper","-fmodules-cache-path=/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/ModuleCache","-I","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/include","-DGGML_USE_ACCELERATE","-DACCELERATE_NEW_LAPACK","-DACCELERATE_LAPACK_ILP64","-DGGML_USE_ACCELERATE","-I/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper","-I/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper","-isysroot","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-fPIC","-g","-MD","-MT","dependencies","-MF","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml.c.d","-c","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/ggml.c","-o","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml.c.o"]
+    deps: "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml.c.d"
+
+  "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/whisper.cpp.o":
+    tool: clang
+    inputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/whisper.cpp"]
+    outputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/whisper.cpp.o"]
+    description: "Compiling whisper whisper.cpp"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang","-fobjc-arc","-target","arm64-apple-macosx14.0","-O0","-DSWIFT_PACKAGE=1","-DDEBUG=1","-fblocks","-index-store-path","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/index/store","-I","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/include","-DGGML_USE_ACCELERATE","-DACCELERATE_NEW_LAPACK","-DACCELERATE_LAPACK_ILP64","-DGGML_USE_ACCELERATE","-I/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper","-I/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper","-isysroot","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-fPIC","-g","-g","-MD","-MT","dependencies","-MF","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/whisper.cpp.d","-std=c++17","-c","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/whisper.cpp","-o","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/whisper.cpp.o"]
+    deps: "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/whisper.cpp.d"
+
+  "<whisper-arm64-apple-macosx15.0-debug.module>":
+    tool: phony
+    inputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-aarch64.c.o","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-alloc.c.o","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-backend.cpp.o","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml-quants.c.o","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/ggml.c.o","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/whisper.build/whisper.cpp.o"]
+    outputs: ["<whisper-arm64-apple-macosx15.0-debug.module>"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Package.swift","/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		429D6B0D2FA8DAC600E2F927 /* whisper in Frameworks */ = {isa = PBXBuildFile; productRef = 429D6B0C2FA8DAC600E2F927 /* whisper */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		429D6A8F2FA8D36F00E2F927 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				429D6B0D2FA8DAC600E2F927 /* whisper in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = OpenVoice;
 			packageProductDependencies = (
+				429D6B0C2FA8DAC600E2F927 /* whisper */,
 			);
 			productName = OpenVoice;
 			productReference = 429D6A7D2FA8D36E00E2F927 /* OpenVoice.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = 429D6A742FA8D36E00E2F927;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				429D6B0B2FA8DAC600E2F927 /* XCLocalSwiftPackageReference "../Packages/Whisper" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 429D6A7E2FA8D36E00E2F927 /* Products */;
 			projectDirPath = "";
@@ -545,6 +554,21 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		429D6B0B2FA8DAC600E2F927 /* XCLocalSwiftPackageReference "../Packages/Whisper" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Packages/Whisper;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		429D6B0C2FA8DAC600E2F927 /* whisper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 429D6B0B2FA8DAC600E2F927 /* XCLocalSwiftPackageReference "../Packages/Whisper" */;
+			productName = whisper;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 429D6A752FA8D36E00E2F927 /* Project object */;
 }
