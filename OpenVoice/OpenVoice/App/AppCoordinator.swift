@@ -9,6 +9,7 @@ final class AppCoordinator: ObservableObject {
     let settings: SettingsStore
     let history: HistoryStore
     let recording: RecordingCoordinator
+    let models: ModelManager
 
     let recorder: AudioRecorder
     let injector: TextInjector
@@ -19,16 +20,16 @@ final class AppCoordinator: ObservableObject {
     init() {
         let settings = SettingsStore()
         let history = HistoryStore()
+        let models = ModelManager()
         let recorder = AudioRecorder()
         let injector = TextInjector(
             pasteboard: SystemPasteboard(),
             poster: CGEventKeystrokePoster(),
             trustChecker: { TextInjector.hasAccessibilityPermission() }
         )
-        let transcriber: Transcribing = StubTranscriber()
         let recording = RecordingCoordinator(
             recorder: recorder,
-            transcriber: transcriber,
+            transcriber: StubTranscriber(),
             injector: injector,
             history: history,
             settings: settings
@@ -38,6 +39,7 @@ final class AppCoordinator: ObservableObject {
         self.settings = settings
         self.history = history
         self.recording = recording
+        self.models = models
         self.recorder = recorder
         self.injector = injector
         self.hotkeyMonitor = hotkey
@@ -54,11 +56,49 @@ final class AppCoordinator: ObservableObject {
                 hotkeyMonitor.start()
                 AppLog.app.info("App started, hotkey=\(self.settings.hotkeyKey.rawValue, privacy: .public)")
             }
+            await loadCurrentModelIfAvailable()
         }
     }
 
     func updateHotkey(_ key: ModifierKey) {
         settings.hotkeyKey = key
         hotkeyMonitor.setKey(key)
+    }
+
+    /// Если выбранная модель уже скачана — поднимает `WhisperTranscriber` и
+    /// заменяет stub. Иначе оставляет stub и пишет лог.
+    func loadCurrentModelIfAvailable() async {
+        guard let modelName = ModelManager.ModelName(rawValue: settings.modelName) else {
+            AppLog.app.error("Unknown model name: \(self.settings.modelName, privacy: .public)")
+            return
+        }
+        guard models.isDownloaded(modelName) else {
+            AppLog.app.info("Model \(modelName.rawValue, privacy: .public) is not downloaded yet — using stub")
+            return
+        }
+        await loadModel(modelName)
+    }
+
+    /// Скачивает (если нужно) и загружает модель в активный транскрайбер.
+    func loadModel(_ modelName: ModelManager.ModelName) async {
+        do {
+            let url = try await models.ensureModel(modelName)
+            try await activateWhisper(modelURL: url)
+            settings.modelName = modelName.rawValue
+        } catch {
+            AppLog.app.error("Model load failed: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
+    private func activateWhisper(modelURL: URL) async throws {
+#if canImport(whisper)
+        let trans = WhisperTranscriber()
+        try await trans.load(modelPath: modelURL)
+        recording.setTranscriber(trans)
+        AppLog.app.info("WhisperTranscriber activated")
+#else
+        AppLog.app.error("whisper module not linked — keeping stub. Add whisper.cpp via SPM.")
+        _ = modelURL
+#endif
     }
 }

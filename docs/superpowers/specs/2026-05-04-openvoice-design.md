@@ -87,7 +87,7 @@
 ### `HistoryStore`
 
 - SwiftData-модель `Transcription { id: UUID, text: String, durationSec: Double, createdAt: Date, language: String }`
-- API: `func save(_:) `, `func recent(limit: Int) -> [Transcription]`, `func delete(_:)`, `func clear()`
+- API: `func save(_:)` , `func recent(limit: Int) -> [Transcription]`, `func delete(_:)`, `func clear()`
 
 ### `Settings`
 
@@ -181,10 +181,10 @@ OpenVoice/
 
 ## Тестирование
 
-- **`TranscriberTests`:** фиксированный 16 kHz wav («раз два три» на русском) → проверяем, что `text` содержит «два»
-- **`TextInjectorTests`:** mock pasteboard provider + mock event poster, проверяем последовательность вызовов
-- **`RecordingCoordinatorTests`:** все переходы стейт-машины, отдельно happy path и каждая ошибка
-- **`ModifierHotkeyMonitorTests`:** генерируем `flagsChanged` события вручную, проверяем триггер только на одиночное нажатие+отпускание правого Cmd
+- `**TranscriberTests`:** фиксированный 16 kHz wav («раз два три» на русском) → проверяем, что `text` содержит «два»
+- `**TextInjectorTests`:** mock pasteboard provider + mock event poster, проверяем последовательность вызовов
+- `**RecordingCoordinatorTests`:** все переходы стейт-машины, отдельно happy path и каждая ошибка
+- `**ModifierHotkeyMonitorTests`:** генерируем `flagsChanged` события вручную, проверяем триггер только на одиночное нажатие+отпускание правого Cmd
 
 ## Что НЕ входит в первую версию (явно отложено)
 
@@ -200,3 +200,4 @@ OpenVoice/
 1. **whisper.cpp SPM-сборка под Apple Silicon + Intel:** проверить на ранней стадии. Если не соберётся universal — отказываемся от Intel
 2. **Modifier-only хоткей конфликтует с системой:** правый Cmd используется в Spotlight по двойному нажатию у некоторых пользователей. Onboarding должен это упомянуть и предложить смену
 3. **Cmd+V не работает в Terminal/iTerm для не-английских раскладок:** fallback — показать текст в HUD с кнопкой копирования
+

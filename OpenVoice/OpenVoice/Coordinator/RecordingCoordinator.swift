@@ -67,8 +67,9 @@ final class RecordingCoordinator: ObservableObject {
     private func finishRecording() async {
         let pcm = recorder.stop()
         let durationSec = Double(pcm.count) / 4.0 / 16_000.0
-        guard durationSec > 0.3 else {
-            state = .error("Слишком коротко")
+        AppLog.coord.info("recording stopped: \(pcm.count, privacy: .public) bytes, \(durationSec, privacy: .public)s")
+        guard durationSec > 0.1 else {
+            state = .error(pcm.isEmpty ? "Микрофон молчит" : "Слишком коротко")
             scheduleReset()
             return
         }
