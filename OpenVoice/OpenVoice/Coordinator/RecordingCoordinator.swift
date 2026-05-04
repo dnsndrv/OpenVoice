@@ -84,9 +84,10 @@ final class RecordingCoordinator: ObservableObject {
         let durationSec = Double(pcm.count) / 4.0 / 16_000.0
         AppLog.coord.info("recording stopped: \(pcm.count, privacy: .public) bytes, \(durationSec, privacy: .public)s")
         guard durationSec > 0.1 else {
-            let detail = String(format: "%dБ ~%.0fмс", pcm.count, durationSec * 1000)
-            state = .error(pcm.isEmpty ? "Микрофон молчит (\(detail))" : "Слишком коротко (\(detail))")
-            scheduleReset()
+            // Быстрый тык по хоткею — пользователь явно ничего не сказал.
+            // Не показываем ошибку, просто молча возвращаемся в idle.
+            AppLog.coord.debug("recording too short — silently dropped")
+            state = .idle
             return
         }
 
@@ -96,8 +97,10 @@ final class RecordingCoordinator: ObservableObject {
             let text = dictionary.apply(to: raw)
             let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else {
-                state = .error("Пусто")
-                scheduleReset()
+                // Whisper не нашёл речи — это норма для коротких щелчков
+                // или фонового шума. Уходим в idle без шума в HUD.
+                AppLog.coord.debug("transcription empty — silently dropped")
+                state = .idle
                 return
             }
             lastText = trimmed
