@@ -26,17 +26,20 @@ final class RecordingCoordinator: ObservableObject {
     private let injector: TextInjector
     private let history: HistoryStore
     private let settings: SettingsStore
+    private let dictionary: CustomDictionary
 
     init(recorder: AudioRecorder,
          transcriber: Transcribing,
          injector: TextInjector,
          history: HistoryStore,
-         settings: SettingsStore) {
+         settings: SettingsStore,
+         dictionary: CustomDictionary) {
         self.recorder = recorder
         self.transcriber = transcriber
         self.injector = injector
         self.history = history
         self.settings = settings
+        self.dictionary = dictionary
     }
 
     /// Подменяет реализацию транскрипции (например, при смене модели).
@@ -89,7 +92,8 @@ final class RecordingCoordinator: ObservableObject {
 
         state = .transcribing
         do {
-            let text = try await transcriber.transcribe(pcm: pcm, language: settings.language)
+            let raw = try await transcriber.transcribe(pcm: pcm, language: settings.language)
+            let text = dictionary.apply(to: raw)
             let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else {
                 state = .error("Пусто")

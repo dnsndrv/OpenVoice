@@ -63,6 +63,7 @@ struct MenuBarView: View {
             HStack {
                 Button("История…") { openHistory() }
                 Button("Настройки…") { openSettings() }
+                Button("Словарь…") { openDictionary() }
                 Button("Диагностика") { openDiagnostics() }
                 Spacer()
                 Button("Выйти") { NSApp.terminate(nil) }
@@ -86,6 +87,14 @@ struct MenuBarView: View {
         WindowOpener.shared.open(id: "settings", title: "Настройки",
                                   size: NSSize(width: 520, height: 540)) {
             SettingsView().environmentObject(app)
+        }
+    }
+
+    private func openDictionary() {
+        let dict = app.dictionary
+        WindowOpener.shared.open(id: "dictionary", title: "Словарь замен",
+                                  size: NSSize(width: 580, height: 480)) {
+            DictionarySettingsView(dictionary: dict)
         }
     }
 

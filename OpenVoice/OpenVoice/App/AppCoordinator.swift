@@ -10,6 +10,7 @@ final class AppCoordinator: ObservableObject {
     let history: HistoryStore
     let recording: RecordingCoordinator
     let models: ModelManager
+    let dictionary: CustomDictionary
 
     let recorder: AudioRecorder
     let injector: TextInjector
@@ -21,6 +22,7 @@ final class AppCoordinator: ObservableObject {
         let settings = SettingsStore()
         let history = HistoryStore()
         let models = ModelManager()
+        let dictionary = CustomDictionary()
         let recorder = AudioRecorder()
         let injector = TextInjector(
             pasteboard: SystemPasteboard(),
@@ -32,7 +34,8 @@ final class AppCoordinator: ObservableObject {
             transcriber: StubTranscriber(),
             injector: injector,
             history: history,
-            settings: settings
+            settings: settings,
+            dictionary: dictionary
         )
         let hotkey = ModifierHotkeyMonitor(key: settings.hotkeyKey)
 
@@ -40,6 +43,7 @@ final class AppCoordinator: ObservableObject {
         self.history = history
         self.recording = recording
         self.models = models
+        self.dictionary = dictionary
         self.recorder = recorder
         self.injector = injector
         self.hotkeyMonitor = hotkey

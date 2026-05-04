@@ -51,6 +51,22 @@ struct SettingsView: View {
                         .onChange(of: restorePasteboard) { _, new in app.settings.restorePasteboard = new }
                 }
 
+                Section("Словарь замен") {
+                    HStack {
+                        Text(app.dictionary.entries.isEmpty
+                             ? "Замен пока нет"
+                             : "Замен: \(app.dictionary.entries.count)")
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button("Открыть…") {
+                            WindowOpener.shared.open(id: "dictionary", title: "Словарь замен",
+                                                      size: NSSize(width: 580, height: 480)) {
+                                DictionarySettingsView(dictionary: app.dictionary)
+                            }
+                        }
+                    }
+                }
+
                 Section("Разрешения") {
                     HStack {
                         Image(systemName: hasAccessibility ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
