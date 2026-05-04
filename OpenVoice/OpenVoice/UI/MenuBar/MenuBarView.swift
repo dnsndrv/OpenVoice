@@ -20,8 +20,17 @@ struct MenuBarView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 Text("Хоткей").font(.caption).foregroundStyle(.secondary)
-                Text(app.settings.hotkeyKey.displayName)
-                    .font(.system(.body, design: .monospaced))
+                HStack {
+                    Text(app.settings.hotkeyKey.displayName)
+                        .font(.system(.body, design: .monospaced))
+                    Spacer()
+                    Button(recording.state == .idle ? "Записать" : "Стоп") {
+                        recording.toggle()
+                    }
+                    .controlSize(.small)
+                }
+                Text("События клавиш: \(app.hotkeyMonitor.eventCount) · мониторинг: \(app.hotkeyMonitor.isActive ? "да" : "нет")")
+                    .font(.caption2).foregroundStyle(.secondary)
             }
 
             Divider()
