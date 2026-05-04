@@ -49,14 +49,38 @@ final class AppCoordinator: ObservableObject {
         }
     }
 
+    @Published var accessibilityGranted: Bool = TextInjector.hasAccessibilityPermission()
+    private var permissionTimer: Timer?
+
     func start() {
         Task {
             _ = await recorder.requestPermission()
             await MainActor.run {
                 hotkeyMonitor.start()
-                AppLog.app.info("App started, hotkey=\(self.settings.hotkeyKey.rawValue, privacy: .public)")
+                AppLog.app.info("App started, hotkey=\(self.settings.hotkeyKey.rawValue, privacy: .public), AX=\(self.accessibilityGranted, privacy: .public)")
+                self.startPermissionWatcher()
             }
             await loadCurrentModelIfAvailable()
+        }
+    }
+
+    /// Раз в секунду проверяем статус Accessibility — как только выдан,
+    /// перезапускаем монитор хоткея (потому что `NSEvent.addGlobalMonitor`
+    /// без Accessibility не получает события клавиш).
+    private func startPermissionWatcher() {
+        permissionTimer?.invalidate()
+        permissionTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                let now = TextInjector.hasAccessibilityPermission()
+                if now != self.accessibilityGranted {
+                    self.accessibilityGranted = now
+                    AppLog.app.info("Accessibility changed: \(now, privacy: .public)")
+                    if now {
+                        self.hotkeyMonitor.start()
+                    }
+                }
+            }
         }
     }
 

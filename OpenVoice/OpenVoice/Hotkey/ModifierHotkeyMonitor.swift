@@ -1,4 +1,5 @@
 import AppKit
+import ApplicationServices
 import Carbon.HIToolbox
 import Foundation
 
@@ -62,6 +63,8 @@ final class ModifierHotkeyMonitor {
 
     func start() {
         stop()
+        let trusted = AXIsProcessTrusted()
+        AppLog.hotkey.info("Starting hotkey monitor: AXIsProcessTrusted=\(trusted, privacy: .public)")
         let mask: NSEvent.EventTypeMask = [.flagsChanged, .keyDown]
         globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
             self?.handle(event: event)
