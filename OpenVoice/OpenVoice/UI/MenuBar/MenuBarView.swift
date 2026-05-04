@@ -1,4 +1,5 @@
 import AppKit
+import AVFoundation
 import SwiftUI
 
 struct MenuBarView: View {
@@ -7,6 +8,7 @@ struct MenuBarView: View {
     @EnvironmentObject var history: HistoryStore
     @State private var showHistory = false
     @State private var showSettings = false
+    @State private var showDiagnostics = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -64,6 +66,7 @@ struct MenuBarView: View {
             HStack {
                 Button("История…") { showHistory = true }
                 Button("Настройки…") { showSettings = true }
+                Button("Диагностика") { showDiagnostics = true }
                 Spacer()
                 Button("Выйти") { NSApp.terminate(nil) }
             }
@@ -80,6 +83,11 @@ struct MenuBarView: View {
             SettingsView()
                 .environmentObject(app)
                 .frame(width: 480, height: 360)
+        }
+        .sheet(isPresented: $showDiagnostics) {
+            DiagnosticsView()
+                .environmentObject(app)
+                .frame(width: 560, height: 420)
         }
     }
 

@@ -3,7 +3,20 @@
 
   ],
   "copyCommands" : {
-
+    "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/Whisper_whisper_metal.bundle/ggml-metal.metal" : {
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper_metal/ggml-metal.metal"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/.build/arm64-apple-macosx/debug/Whisper_whisper_metal.bundle/ggml-metal.metal"
+        }
+      ]
+    }
   },
   "explicitTargetDependencyImportCheckingMode" : {
     "none" : {
@@ -27,6 +40,9 @@
   },
   "targetDependencyMap" : {
     "whisper" : [
+      "whisper_metal"
+    ],
+    "whisper_metal" : [
 
     ]
   },

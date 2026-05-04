@@ -61,8 +61,9 @@ dependencies: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include/_ctermid.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include/sys/_types/_off_t.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include/sys/_types/_ssize_t.h \
-  /Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/include/ggml-alloc.h \
+  /Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper_metal/include/ggml-metal.h \
   /Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/include/ggml-backend.h \
+  /Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper/include/ggml-alloc.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include/c++/v1/atomic \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include/c++/v1/__assert \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include/c++/v1/__assertion_handler \

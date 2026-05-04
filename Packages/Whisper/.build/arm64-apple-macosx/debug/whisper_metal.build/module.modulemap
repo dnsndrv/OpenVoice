@@ -1,0 +1,4 @@
+module whisper_metal {
+    umbrella "/Users/andreev-denis/Desktop/dev/OpenVoice/Packages/Whisper/Sources/whisper_metal/include"
+    export *
+}

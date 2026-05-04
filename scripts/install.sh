@@ -28,6 +28,11 @@ fi
 
 mkdir -p "$DEST_DIR"
 
+echo "▶ Завершаю все запущенные копии OpenVoice…"
+osascript -e 'tell application "OpenVoice" to quit' 2>/dev/null || true
+pkill -x OpenVoice 2>/dev/null || true
+sleep 0.5
+
 echo "▶ Build OpenVoice (Release)…"
 DERIVED="$(mktemp -d)"
 trap 'rm -rf "$DERIVED"' EXIT
