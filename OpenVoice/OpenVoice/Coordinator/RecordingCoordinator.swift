@@ -54,13 +54,25 @@ final class RecordingCoordinator: ObservableObject {
     }
 
     private func startRecording() {
-        do {
-            try recorder.start()
-            state = .recording
-        } catch {
-            AppLog.coord.error("start failed: \(error.localizedDescription)")
-            state = .error(error.localizedDescription)
-            scheduleReset()
+        Task { @MainActor in
+            do {
+                try recorder.start()
+                state = .recording
+            } catch AudioRecorder.Error.noPermission {
+                _ = await recorder.requestPermission()
+                do {
+                    try recorder.start()
+                    state = .recording
+                } catch {
+                    AppLog.coord.error("start failed (after permission): \(error.localizedDescription)")
+                    state = .error("Нет доступа к микрофону. Проверь System Settings → Privacy → Microphone")
+                    scheduleReset()
+                }
+            } catch {
+                AppLog.coord.error("start failed: \(error.localizedDescription)")
+                state = .error(error.localizedDescription)
+                scheduleReset()
+            }
         }
     }
 
@@ -107,7 +119,7 @@ final class RecordingCoordinator: ObservableObject {
 
     private func scheduleReset() {
         Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            try? await Task.sleep(nanoseconds: 4_000_000_000)
             await MainActor.run {
                 if case .error = self?.state { self?.state = .idle }
             }
