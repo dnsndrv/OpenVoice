@@ -15,9 +15,13 @@ set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 XCODEPROJ="$PROJECT_DIR/OpenVoice/OpenVoice.xcodeproj"
+SCHEME="OpenVoice"          # Xcode scheme name (kept after VibeVoice rebrand)
+APP_NAME="VibeVoice.app"    # produced .app bundle (PRODUCT_NAME=VibeVoice)
 DEST_DIR="$HOME/Applications"
-APP_NAME="OpenVoice.app"
 DEST="$DEST_DIR/$APP_NAME"
+# Persistent self-signed signing identity. Name kept legacy on purpose:
+# changing it would invalidate the designated requirement of all existing
+# TCC permission grants on the developer's machine.
 SIGN_IDENTITY="OpenVoice Local Signer"
 KEYCHAIN="$HOME/Library/Keychains/login.keychain-db"
 
@@ -125,18 +129,20 @@ ensure_signing_identity
 
 mkdir -p "$DEST_DIR"
 
-echo "▶ Завершаю запущенные копии OpenVoice…"
+echo "▶ Завершаю запущенные копии VibeVoice…"
+osascript -e 'tell application "VibeVoice" to quit' 2>/dev/null || true
 osascript -e 'tell application "OpenVoice" to quit' 2>/dev/null || true
+pkill -x VibeVoice 2>/dev/null || true
 pkill -x OpenVoice 2>/dev/null || true
 sleep 0.5
 
-echo "▶ Build OpenVoice (Release)…"
+echo "▶ Build VibeVoice (Release)…"
 DERIVED="$(mktemp -d)"
 trap 'rm -rf "$DERIVED"' EXIT
 
 xcodebuild \
     -project "$XCODEPROJ" \
-    -scheme OpenVoice \
+    -scheme "$SCHEME" \
     -configuration Release \
     -derivedDataPath "$DERIVED" \
     -destination 'platform=macOS' \
@@ -156,6 +162,10 @@ fi
 echo "▶ Install $DEST"
 if [[ -d "$DEST" ]]; then
     rm -rf "$DEST"
+fi
+# Подчистить устаревший OpenVoice.app (ребрендинг VibeVoice).
+if [[ -d "$DEST_DIR/OpenVoice.app" ]]; then
+    rm -rf "$DEST_DIR/OpenVoice.app"
 fi
 ditto "$BUILT_APP" "$DEST"
 

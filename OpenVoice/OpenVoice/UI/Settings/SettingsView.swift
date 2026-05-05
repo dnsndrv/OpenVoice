@@ -136,7 +136,7 @@ struct SettingsView: View {
                 }
                 ProgressView(value: progress)
                 HStack {
-                    Text("Файл сохранится в ~/Library/Application Support/OpenVoice/models")
+                    Text("Файл сохранится в ~/Library/Application Support/VibeVoice/models")
                         .font(.caption2).foregroundStyle(.secondary)
                     Spacer()
                     Button("Отмена") { models.cancel() }

@@ -14,7 +14,7 @@ final class MenuBarController {
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "mic.fill", accessibilityDescription: "OpenVoice")
+            button.image = NSImage(systemSymbolName: "mic.fill", accessibilityDescription: "VibeVoice")
             button.imagePosition = .imageOnly
             button.target = self
             button.action = #selector(togglePopover(_:))
@@ -55,6 +55,6 @@ final class MenuBarController {
         case .transcribing, .injecting: symbolName = "waveform.circle.fill"
         case .error: symbolName = "mic.slash.fill"
         }
-        button.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: "OpenVoice")
+        button.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: "VibeVoice")
     }
 }

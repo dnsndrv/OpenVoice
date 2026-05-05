@@ -37,11 +37,30 @@ final class ModelManager: ObservableObject {
     private var sessionDelegate: DownloadDelegate?
 
     static var modelsDirectory: URL {
-        let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        let dir = appSupport
+            .appendingPathComponent("VibeVoice", isDirectory: true)
+            .appendingPathComponent("models", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+
+        // Migrate from the legacy path (OpenVoice → VibeVoice rename) so
+        // returning users don't have to re-download multi-GB models.
+        let legacy = appSupport
             .appendingPathComponent("OpenVoice", isDirectory: true)
             .appendingPathComponent("models", isDirectory: true)
-        try? FileManager.default.createDirectory(at: support, withIntermediateDirectories: true)
-        return support
+        if FileManager.default.fileExists(atPath: legacy.path) {
+            if let entries = try? FileManager.default.contentsOfDirectory(atPath: legacy.path) {
+                for name in entries {
+                    let from = legacy.appendingPathComponent(name)
+                    let to = dir.appendingPathComponent(name)
+                    if !FileManager.default.fileExists(atPath: to.path) {
+                        try? FileManager.default.moveItem(at: from, to: to)
+                    }
+                }
+                try? FileManager.default.removeItem(at: legacy.deletingLastPathComponent())
+            }
+        }
+        return dir
     }
 
     func localURL(for model: ModelName) -> URL {

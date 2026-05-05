@@ -1,6 +1,6 @@
-# OpenVoice
+# VibeVoice
 
-Аналог [Voice Ink](https://github.com/Beingpax/VoiceInk) — нативное macOS-приложение для системной голосовой диктовки. Жмёшь горячую клавишу, говоришь, ещё раз — расшифрованный текст вставляется в активное приложение. Полностью локально, оффлайн, приватно.
+Нативное macOS-приложение для системной голосовой диктовки, идейно похожее на [Voice Ink](https://github.com/Beingpax/VoiceInk). Жмёшь горячую клавишу, говоришь, ещё раз — расшифрованный текст вставляется в активное приложение. Полностью локально, оффлайн, приватно.
 
 - Распознавание речи через [whisper.cpp](https://github.com/ggml-org/whisper.cpp) с Metal-ускорением на Apple Silicon
 - Меню-бар приложение, никаких окон в Dock
@@ -24,9 +24,9 @@ bash scripts/install.sh
 
 Скрипт делает:
 
-1. Создаёт постоянный self-signed сертификат `OpenVoice Local Signer` в твоём login keychain (один раз). При первом запуске macOS спросит пароль учётной записи через GUI-диалог — нужно для разблокировки доступа codesign к ключу.
+1. Создаёт постоянный self-signed сертификат `OpenVoice Local Signer` в твоём login keychain (один раз — имя сертификата осталось «OpenVoice» сознательно: смена имени инвалидирует все TCC-разрешения, выданные раньше). При первом запуске macOS спросит пароль учётной записи через GUI-диалог — нужно для разблокировки доступа codesign к ключу.
 2. Собирает Release-конфигурацию проекта.
-3. Подписывает приложение этим сертификатом и кладёт в `~/Applications/OpenVoice.app`.
+3. Подписывает приложение этим сертификатом и кладёт в `~/Applications/VibeVoice.app`.
 4. Запускает приложение.
 
 Зачем self-signed: macOS TCC привязывает разрешения (Microphone, Accessibility) к **designated requirement** подписи. У ad-hoc подписи это `cdhash`, который меняется на каждой пересборке → разрешения слетают. С постоянным сертификатом requirement содержит хеш сертификата → выданные один раз разрешения сохраняются между пересборками.
@@ -34,8 +34,8 @@ bash scripts/install.sh
 ## Первый запуск
 
 1. macOS попросит доступ к **микрофону** — Allow.
-2. Открой иконку микрофона в menu bar → **Настройки → Разрешения → «Открыть настройки»** → добавь `OpenVoice` в список Accessibility (drag-and-drop из `~/Applications/` или через `+`). Это нужно для глобального перехвата хоткея.
-3. Открой **Настройки → Модель** → выбери `small` (~460 MB) → **Скачать**. Модель кэшируется в `~/Library/Application Support/OpenVoice/models/`.
+2. Открой иконку микрофона в menu bar → **Настройки → Разрешения → «Открыть настройки»** → добавь `VibeVoice` в список Accessibility (drag-and-drop из `~/Applications/` или через `+`). Это нужно для глобального перехвата хоткея.
+3. Открой **Настройки → Модель** → выбери `small` (~460 MB) → **Скачать**. Модель кэшируется в `~/Library/Application Support/VibeVoice/models/`.
 
 После этого:
 - Поставь курсор в любое текстовое поле.
@@ -46,7 +46,7 @@ bash scripts/install.sh
 ## Архитектура
 
 ```
-OpenVoice/                     # Xcode проект
+OpenVoice/                     # Xcode проект (имя папки и .xcodeproj оставлены)
 ├── App/                       # AppDelegate, AppCoordinator
 ├── Audio/                     # AVAudioEngine + AVAudioConverter → 16 kHz mono PCM
 ├── Transcription/             # WhisperBridge (C API), WhisperTranscriber (actor)
@@ -74,4 +74,4 @@ Packages/Whisper/              # Локальный SPM-пакет: whisper.cpp 
 
 ## Лицензия
 
-MIT для нашего кода. whisper.cpp под MIT.
+MIT для нашего кода (см. `LICENSE`). whisper.cpp под MIT (см. `Packages/Whisper/LICENSE`).

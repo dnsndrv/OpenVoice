@@ -408,16 +408,18 @@
 				DEVELOPMENT_ASSET_PATHS = "\"OpenVoice/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = VibeVoice;
+				INFOPLIST_KEY_CFBundleName = VibeVoice;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "OpenVoice использует микрофон для распознавания речи";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "VibeVoice использует микрофон для распознавания речи";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = no.OpenVoice;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.vibevoice.app;
+				PRODUCT_NAME = VibeVoice;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -435,16 +437,18 @@
 				DEVELOPMENT_ASSET_PATHS = "\"OpenVoice/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = VibeVoice;
+				INFOPLIST_KEY_CFBundleName = VibeVoice;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "OpenVoice использует микрофон для распознавания речи";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "VibeVoice использует микрофон для распознавания речи";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = no.OpenVoice;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.vibevoice.app;
+				PRODUCT_NAME = VibeVoice;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};

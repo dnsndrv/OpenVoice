@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="OpenVoice/OpenVoice/Assets.xcassets/AppIcon.appiconset/icon_256x256@2x.png" width="160" height="160" alt="OpenVoice icon" />
-  <h1>OpenVoice</h1>
+  <img src="OpenVoice/OpenVoice/Assets.xcassets/AppIcon.appiconset/icon_256x256@2x.png" width="160" height="160" alt="VibeVoice icon" />
+  <h1>VibeVoice</h1>
   <p>System-wide voice dictation for macOS. Press a key, speak, press again — your transcribed text is pasted into whatever app is in front. 100% local, offline, free.</p>
   <p>
     <a href="README.ru.md">Русская версия</a>
@@ -31,12 +31,12 @@ A free, MIT-licensed alternative to commercial dictation apps. Built around [whi
 
 ### Option 1 — Prebuilt DMG (recommended)
 
-1. Download the latest `OpenVoice.dmg` from [Releases](https://github.com/dnsndrv/OpenVoice/releases).
-2. Open the DMG and drag `OpenVoice.app` into `~/Applications`.
+1. Download the latest `VibeVoice.dmg` from [Releases](https://github.com/dnsndrv/OpenVoice/releases).
+2. Open the DMG and drag `VibeVoice.app` into `~/Applications`.
 3. The app is signed with a self-signed certificate (no Apple Developer ID), so Gatekeeper will block it on first launch. Run this once in Terminal to clear the quarantine flag:
 
 ```bash
-xattr -dr com.apple.quarantine ~/Applications/OpenVoice.app
+xattr -dr com.apple.quarantine ~/Applications/VibeVoice.app
 ```
 
 4. Launch the app. Grant Microphone access when prompted.
@@ -49,28 +49,28 @@ cd OpenVoice
 bash scripts/install.sh
 ```
 
-The script creates a persistent self-signed certificate in your login keychain, builds the Release configuration, signs the app, and installs it into `~/Applications/OpenVoice.app`. macOS will prompt for your password once (via a GUI dialog) so `codesign` can use the key.
+The script creates a persistent self-signed certificate in your login keychain, builds the Release configuration, signs the app, and installs it into `~/Applications/VibeVoice.app`. macOS will prompt for your password once (via a GUI dialog) so `codesign` can use the key.
 
 Why a persistent certificate? macOS TCC ties Microphone/Accessibility permissions to the codesign identity. Ad-hoc signing produces a fresh hash on every build, so permissions get revoked. With a stable cert, you grant permissions once and they stick across rebuilds.
 
 ## First-run setup
 
 1. **Microphone**: macOS will ask. Click *Allow*.
-2. **Accessibility**: open the menu bar icon → *Settings* → *Permissions* → *Open Settings…* → drag `OpenVoice.app` into the Accessibility list. This is required so OpenVoice can capture global hotkeys and synthesize ⌘V.
-3. **Whisper model**: open the menu bar icon → *Settings* → *Model* → choose `small` (~460 MB) or `medium` (~1.4 GB) → *Download*. Models are cached in `~/Library/Application Support/OpenVoice/models/`.
+2. **Accessibility**: open the menu bar icon → *Settings* → *Permissions* → *Open Settings…* → drag `VibeVoice.app` into the Accessibility list. This is required so VibeVoice can capture global hotkeys and synthesize ⌘V.
+3. **Whisper model**: open the menu bar icon → *Settings* → *Model* → choose `small` (~460 MB) or `medium` (~1.4 GB) → *Download*. Models are cached in `~/Library/Application Support/VibeVoice/models/`.
 
 After that, place your cursor in any text field, press right ⌘, talk, press right ⌘ again. Your text shows up.
 
 ## Usage tips
 
-- **Custom Dictionary** (menu bar → *Dictionary*): teach OpenVoice to fix mishearings consistently. Each entry is a *heard → replace with* pair with optional case sensitivity. Useful for proper nouns, acronyms, and technical terms.
+- **Custom Dictionary** (menu bar → *Dictionary*): teach VibeVoice to fix mishearings consistently. Each entry is a *heard → replace with* pair with optional case sensitivity. Useful for proper nouns, acronyms, and technical terms.
 - **Recording state**: the bottom-of-screen pill shows live audio level, timer and transcription progress. It hides automatically the moment Whisper finishes; pasting happens in the background.
 - **Languages**: `Settings → Language` lets you pick Russian, English, or `Auto`. Auto detection adds a small overhead but works well across languages.
 
 ## Architecture
 
 ```
-OpenVoice/
+OpenVoice/                  # Xcode project root (folder kept after VibeVoice rebrand)
 ├── App/                    # AppDelegate, AppCoordinator (DI root)
 ├── Audio/                  # AVAudioEngine + AVAudioConverter → 16 kHz mono PCM
 ├── Transcription/          # WhisperBridge (C API), WhisperTranscriber (actor)
@@ -88,7 +88,7 @@ The `Packages/Whisper` package vendors whisper.cpp without `unsafeFlags` (the up
 
 ## License
 
-OpenVoice is [MIT licensed](LICENSE).
+VibeVoice is [MIT licensed](LICENSE).
 
 Bundled dependencies:
 - [whisper.cpp](https://github.com/ggerganov/whisper.cpp) — MIT — see `Packages/Whisper/LICENSE`.

@@ -16,9 +16,10 @@ set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 XCODEPROJ="$PROJECT_DIR/OpenVoice/OpenVoice.xcodeproj"
+SCHEME="OpenVoice"
 DIST="$PROJECT_DIR/dist"
-APP_NAME="OpenVoice.app"
-DMG_NAME="OpenVoice.dmg"
+APP_NAME="VibeVoice.app"
+DMG_NAME="VibeVoice.dmg"
 SIGN_IDENTITY="OpenVoice Local Signer"
 KEYCHAIN="$HOME/Library/Keychains/login.keychain-db"
 
@@ -34,7 +35,7 @@ trap 'rm -rf "$DERIVED"' EXIT
 
 xcodebuild \
     -project "$XCODEPROJ" \
-    -scheme OpenVoice \
+    -scheme "$SCHEME" \
     -configuration Release \
     -derivedDataPath "$DERIVED" \
     -destination 'platform=macOS' \
@@ -73,7 +74,7 @@ ln -s /Applications "$STAGING/Applications"
 
 echo "▶ Create DMG → $DIST/$DMG_NAME"
 hdiutil create \
-    -volname "OpenVoice" \
+    -volname "VibeVoice" \
     -srcfolder "$STAGING" \
     -ov \
     -format UDZO \
