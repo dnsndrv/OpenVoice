@@ -105,4 +105,3 @@ Issues and PRs welcome. The codebase is small and the architecture is documented
 ## Acknowledgements
 
 - [whisper.cpp](https://github.com/ggerganov/whisper.cpp) by Georgi Gerganov — the core that makes this possible.
-- [VoiceInk](https://github.com/Beingpax/VoiceInk) — UI/UX inspiration (separate codebase, GPL).

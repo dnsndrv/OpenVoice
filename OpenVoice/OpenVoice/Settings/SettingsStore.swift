@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 final class SettingsStore: ObservableObject {
-    @AppStorage("hotkeyKey") var hotkeyKeyRaw: String = ModifierKey.rightCommand.rawValue
+    @AppStorage("hotkeyKey") var hotkeyKeyRaw: String = ModifierKey.rightOption.rawValue
     @AppStorage("language") var language: String = "ru"
     @AppStorage("modelName") var modelName: String = "small"
     @AppStorage("restorePasteboard") var restorePasteboard: Bool = true

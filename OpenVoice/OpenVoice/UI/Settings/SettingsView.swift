@@ -85,6 +85,20 @@ struct SettingsView: View {
                         }
                     }
                 }
+
+                Section("Диагностика") {
+                    HStack {
+                        Text("Системная информация и состояние компонентов")
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button("Открыть…") {
+                            WindowOpener.shared.open(id: "diagnostics", title: "Диагностика",
+                                                      size: NSSize(width: 600, height: 480)) {
+                                DiagnosticsView().environmentObject(app)
+                            }
+                        }
+                    }
+                }
             }
             .formStyle(.grouped)
             .clearScrollBackground()

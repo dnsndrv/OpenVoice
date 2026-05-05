@@ -101,12 +101,19 @@ struct MenuBarView: View {
     private var hotkeyRow: some View {
         HStack(spacing: 8) {
             Image(systemName: "keyboard").foregroundStyle(.secondary)
-            Text(app.settings.hotkeyKey.displayName)
-                .font(.system(.callout, design: .rounded).weight(.medium))
-            Text("·").foregroundStyle(.secondary)
-            Text("одиночный модификатор-toggle")
-                .font(.caption).foregroundStyle(.secondary)
+            Text("Хоткей").font(.callout).foregroundStyle(.secondary)
             Spacer()
+            Picker("", selection: Binding(
+                get: { app.settings.hotkeyKey },
+                set: { app.updateHotkey($0) }
+            )) {
+                ForEach(ModifierKey.allCases) { key in
+                    Text(key.displayName).tag(key)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .fixedSize()
             Circle()
                 .fill(app.hotkeyMonitor.isActive ? Color.green : Color.orange)
                 .frame(width: 6, height: 6)
@@ -154,7 +161,6 @@ struct MenuBarView: View {
             actionButton(systemName: "clock", label: "История") { openHistory() }
             actionButton(systemName: "gearshape", label: "Настройки") { openSettings() }
             actionButton(systemName: "book", label: "Словарь") { openDictionary() }
-            actionButton(systemName: "stethoscope", label: "Диагностика") { openDiagnostics() }
             Spacer()
             Button(action: { NSApp.terminate(nil) }) {
                 Image(systemName: "power")
@@ -261,13 +267,6 @@ struct MenuBarView: View {
         }
     }
 
-    private func openDiagnostics() {
-        let app = self.app
-        WindowOpener.shared.open(id: "diagnostics", title: "Диагностика",
-                                  size: NSSize(width: 600, height: 480)) {
-            DiagnosticsView().environmentObject(app)
-        }
-    }
 }
 
 // MARK: - Recent row
